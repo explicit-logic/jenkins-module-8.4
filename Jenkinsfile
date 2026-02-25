@@ -18,6 +18,7 @@ pipeline {
   }
   parameters {
     string(name: 'DOCKER_IMAGE', defaultValue: 'explicitlogic/app')
+    string(name: 'DOCKER_TAG', defaultValue: 'pipeline')
   }
   stages {
     stage("init") {
@@ -31,11 +32,6 @@ pipeline {
     }
 
     stage("test") {
-      when {
-        expression {
-          BRANCH_NAME == "main"
-        }
-      }
       steps {
         dir('app') {
           script {
@@ -59,9 +55,9 @@ pipeline {
       steps {
         dir('app') {
           script {
-            buildImage(params.DOCKER_IMAGE, env.BRANCH_NAME)
+            buildImage(params.DOCKER_IMAGE, params.DOCKER_TAG)
             dockerLogin()
-            dockerPush(params.DOCKER_IMAGE, env.BRANCH_NAME)
+            dockerPush(params.DOCKER_IMAGE, params.DOCKER_TAG)
           }
         }
       }
